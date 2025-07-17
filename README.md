@@ -77,6 +77,6 @@ flowchart TD
 
 ## 📧 Contact
 
-For questions, bug reports, or feature requests, open an issue 
+For questions, bug reports, or feature requests, please open an issue<br>
 For direct inquires contact : avirupdasgupta3628@gmail.com
 

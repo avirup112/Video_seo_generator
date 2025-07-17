@@ -35,9 +35,6 @@ flowchart TD
     E -- Groq --> F --> H
     E -- Langchain Agent --> G --> H
     H --> I
-    style A fill:#E3F2FD
-    style H fill:#FFF9C4
-    style I fill:#C8E6C9
 ```
 
 ---

@@ -62,22 +62,8 @@ flowchart TD
 
 ---
 
-## 📝 How to Add a Project Description to the Repo
 
-1. **Edit the README.md file** (this file) to update the project description at the top.
-2. **On GitHub:**  
-   - Go to your repository page.
-   - Click the gear/settings icon next to the repo name.
-   - In the “Description” field, add a short summary (e.g., “AI-powered multilingual video SEO optimizer for YouTube and more”).
-   - Click “Save”.
 
----
-
-## 📄 Template for Project Description
-
-> **AI-powered multilingual video SEO optimizer for YouTube and other platforms. Generates tags, descriptions, timestamps, titles, and thumbnails using Groq and Langchain. Modern Streamlit UI.**
-
----
 
 ## 🤝 Contributing
 
@@ -91,5 +77,6 @@ flowchart TD
 
 ## 📧 Contact
 
-For questions or support, open an issue or contact the maintainer.
+For questions, bug reports, or feature requests, open an issue 
+For direct inquires contact : avirupdasgupta3628@gmail.com
 

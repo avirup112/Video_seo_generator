@@ -1,10 +1,10 @@
 streamlit
 pydantic==1.10.13
 langchain==0.0.279
-langchain-core==0.1.13
 langchain-groq==0.0.1
 langsmith==0.0.63
 google-api-python-client
 pillow
 python-dotenv
 requests
+groq

@@ -118,6 +118,18 @@ def get_youtube_metadata(video_id):
 
     return metadata
 
+# Add YouTube transcript extraction
+
+def get_youtube_transcript(video_id):
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        return ' '.join([seg['text'] for seg in transcript])
+    except Exception:
+        return ""
+
+# Update get_video_metadata to include transcript
+
 def get_video_metadata(url):
     """Return video metadata for supported platforms."""
     if not url:
@@ -129,7 +141,9 @@ def get_video_metadata(url):
         video_id = extract_video_id(url)
         if not video_id:
             raise ValueError("Invalid YouTube URL or missing video ID.")
-        return get_youtube_metadata(video_id)
+        metadata = get_youtube_metadata(video_id)
+        metadata["transcript"] = get_youtube_transcript(video_id)
+        return metadata
 
     return {
         "title": f"Video on {platform}",
@@ -139,5 +153,6 @@ def get_video_metadata(url):
         "views": 0,
         "author": f"{platform.capitalize()} Creator",
         "platform": platform,
-        "video_id": "unknown"
+        "video_id": "unknown",
+        "transcript": ""
     }

@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import requests
 from io import BytesIO
 import os
+import base64
 
 def generate_thumbnail(client, concept, video_title, platform="YouTube"):
     """Generate a thumbnail image based on the concept and video title."""
@@ -46,7 +47,7 @@ def generate_thumbnail(client, concept, video_title, platform="YouTube"):
 
         # Generate image from DALL·E 3
         response = client.images.generate(
-            model="dall-e-3",
+            model="Stable Diffusion 3.5 Large:",
             prompt=prompt.strip(),
             size=size,
             quality="standard",
@@ -109,7 +110,13 @@ def add_text_with_outline(img,draw,concept):
     except:
         font = ImageFont.load_default()
 
-    text_width, text_height = draw.textsize(text, font=font)
+    # Use textbbox if available, else fallback to font.getsize
+    try:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+    except AttributeError:
+        text_width, text_height = font.getsize(text)
     x = (img.width - text_width) // 2
     y = (img.height - text_height) // 2
 
@@ -173,8 +180,48 @@ def hex_to_rgb(hex_color):
     return tuple(int(hex_color[i:i+2],16) for i in (0,2,4))
 
 
+def generate_thumbnail_with_stability(concept, video_title):
+    """Generate a thumbnail image using the Stability AI API and return the image as a PIL Image object."""
+    import os, requests, base64
+    from PIL import Image
+    from io import BytesIO
+    api_key = os.environ.get("STABILITY_API_KEY")
+    if not api_key:
+        return None
+    prompt = f"{concept.get('concept', '')}, {concept.get('text_overlay', '')}, {video_title}, colors: {', '.join(concept.get('colors', []))}"
+    response = requests.post(
+        "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "text_prompts": [{"text": prompt}],
+            "cfg_scale": 7,
+            "height": 1024,
+            "width": 1024,
+            "samples": 1,
+            "steps": 30
+        }
+    )
+    if response.status_code == 200:
+        data = response.json()
+        image_base64 = data["artifacts"][0]["base64"]
+        image_bytes = base64.b64decode(image_base64)
+        return Image.open(BytesIO(image_bytes))
+    else:
+        return None
+
+# In create_thumbnail_preview, use Stability if available
+
 def create_thumbnail_preview(concept,video_title,base_image_url=None):
     """Create a thumbnail preview for the video based on the concept."""
+    import os
+    if os.environ.get("STABILITY_API_KEY"):
+        img = generate_thumbnail_with_stability(concept, video_title)
+        if img is not None:
+            return img
+    # fallback to existing logic
     if base_image_url:
         try:
             response = requests.get(base_image_url)
